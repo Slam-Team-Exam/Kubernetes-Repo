@@ -1,0 +1,26 @@
+
+
+services:
+  login:
+    image: login:latest
+    container_name: login
+    ports:
+      - "8080:8080"   # adjust ports if needed
+    restart: unless-stopped
+
+  matchmakerservice:
+    image: matchmakerservice:dev
+    container_name: matchmakerservice
+    ports:
+      - "5000:5000"   # adjust ports if needed
+    restart: unless-stopped
+
+  microclient:
+    image: microclient:dev
+    container_name: microclient
+    environment:
+        LOGIN_URL: "http://login:8080/health"
+        MATCHMAKER_URL: "http://matchmakerservice:5000/health"
+    ports:
+      - "3000:3000"   # adjust ports if needed
+    restart: unless-stopped
