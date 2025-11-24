@@ -2,21 +2,51 @@
 
 services:
   login:
-    image: login:latest
+    image: login
     container_name: login
     ports:
-      - "8080:8080"   # adjust ports if needed
+      - "8080:8080"   
     restart: unless-stopped
 
   matchmakerservice:
     image: matchmakerservice
     container_name: matchmakerservice
     ports:
-      - "5000:5000"   # adjust ports if needed
+      - "5000:5000"   
     restart: unless-stopped
 
   microclient:
     image: microclient
+    container_name: client
     ports:
-      - "3000:3000"   # adjust ports if needed
+      - "3000:3000"   
     restart: unless-stopped
+
+  store:
+    image: store
+    container_name: store
+    ports:
+      - "7000:7000"
+    restart: unless-stopped
+  
+  playerinfo:
+    image: playerinfo
+    container_name: playerinfo
+    ports:
+      - "6000:6000"
+    restart: unless-stopped
+
+  gameserver:
+    image: gameserver
+    container_name: gameserver
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
+  
+  relayrouter:
+    image: relayrouter
+    container_name: relayrouter
+    ports:
+      - "5002:5002"
+    restart: unless-stopped
+  
