@@ -1,18 +1,17 @@
-
-
 services:
+
   login:
     image: login
     container_name: login
     ports:
-      - "8080:8080"   
+      - "8080:8080"
     restart: unless-stopped
 
   matchmakerservice:
     image: matchmakerservice
     container_name: matchmakerservice
     ports:
-      - "5000:5000"   
+      - "5000:5000"
     restart: unless-stopped
 
   storeservice:
@@ -21,10 +20,10 @@ services:
     ports:
       - "8081:8081"
     restart: unless-stopped
-  
-  playerinfo:
-    image: playerinfo
-    container_name: playerinfo
+
+  playerinfoservice:
+    image: playerinfoservice
+    container_name: playerinfoservice
     ports:
       - "6000:6000"
     restart: unless-stopped
@@ -35,17 +34,22 @@ services:
     ports:
       - "5001:5001"
     restart: unless-stopped
-  
+
   relayrouter:
     image: relayrouter
     container_name: relayrouter
     ports:
       - "5002:5002"
     restart: unless-stopped
-  
+
   microclient:
     image: microclient
     container_name: client
     ports:
-      - "3000:3000"   
-    restart: unless-stopped
+      - "3000:3000"
+    command: /bin/sh -c "sleep 5 && dotnet Client.dll"
+    depends_on:
+    - login
+    - matchmakerservice
+    - storeservice
+    - playerinfoservice
