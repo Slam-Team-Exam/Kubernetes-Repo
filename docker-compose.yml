@@ -19,7 +19,7 @@ services:
     image: storeservice
     container_name: storeservice
     ports:
-      - "8080:8080"
+      - "8081:8081"
     restart: unless-stopped
   
   playerinfo:
