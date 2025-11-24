@@ -16,10 +16,10 @@ services:
     restart: unless-stopped
 
   storeservice:
-    image: store
-    container_name: store
+    image: storeservice
+    container_name: storeservice
     ports:
-      - "7000:7000"
+      - "8080:8080"
     restart: unless-stopped
   
   playerinfo:
