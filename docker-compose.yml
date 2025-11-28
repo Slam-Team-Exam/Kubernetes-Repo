@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
 
   relayrouter:
-    image: relayrouter
+    image: sofiecat/relay_router:latest
     container_name: relayrouter
     ports:
       - "5002:5002"
@@ -53,3 +53,12 @@ services:
     - matchmakerservice
     - storeservice
     - playerinfoservice
+  relay:
+    image: sofiecat/relay:latest
+    container_name: relay
+    ports:
+      - "9000:9000"
+      - "52306:52306"
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
