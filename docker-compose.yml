@@ -1,60 +1,57 @@
 services:
 
   login:
-    image: login
+    image: tornbjerg/login-system:1.0.0
     container_name: login
     ports:
       - "8080:8080"
     restart: unless-stopped
 
   matchmakerservice:
-    image: matchmakerservice
+    image: tornbjerg/matchmaker-service:1.0.0
     container_name: matchmakerservice
     ports:
       - "5000:5000"
     restart: unless-stopped
 
   storeservice:
-    image: storeservice
+    image: tornbjerg/shop:1.0.0
     container_name: storeservice
     ports:
       - "8081:8081"
     restart: unless-stopped
 
   playerinfoservice:
-    image: playerinfoservice
+    image: tornbjerg/player-info:1.0.0
     container_name: playerinfoservice
     ports:
       - "6000:6000"
     restart: unless-stopped
 
   gameserver:
-    image: gameserver
+    image: tornbjerg/game-server:1.0.0
     container_name: gameserver
     ports:
       - "5001:5001"
     restart: unless-stopped
 
   relayrouter:
-    image: sofiecat/relay_router:latest
+    image: tornbjerg/relay-router:1.0.0
     container_name: relayrouter
     ports:
       - "5002:5002"
     restart: unless-stopped
 
-  microclient:
-    image: microclient
-    container_name: client
+  rabbitmq:
+    image: rabbitmq:4.2-management
+    container_name: rabbitMQ
     ports:
-      - "3000:3000"
-    command: /bin/sh -c "sleep 5 && dotnet Client.dll"
-    depends_on:
-    - login
-    - matchmakerservice
-    - storeservice
-    - playerinfoservice
+      - "5672:5672"     # AMQP
+      - "15672:15672"   # Management UI
+    restart: unless-stopped
+  
   relay:
-    image: sofiecat/relay:latest
+    image: tornbjerg/relay-service:1.0.0
     container_name: relay
     ports:
       - "9000:9000"
@@ -62,3 +59,17 @@ services:
     restart: unless-stopped
     depends_on:
       - rabbitmq
+
+
+
+  microclient:
+    image: tornbjerg/micro-client:1.0.1
+    container_name: client
+    ports:
+      - "3000:3000"
+    command: /bin/sh -c "sleep 5 && dotnet Client.dll"
+    depends_on:
+      - login
+      - matchmakerservice
+      - storeservice
+      - playerinfoservice
