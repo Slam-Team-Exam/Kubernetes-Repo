@@ -72,7 +72,7 @@ services:
       MATCHMAKER_URL: http://matchmakerservice:5000/Match/health
       STORE_URL: http://storeservice:8081/Store
       PLAYER_URL: http://playerinfoservice:6000/api/player
-    command: /bin/sh -c "sleep 5 && dotnet Client.dll"
+    command: /bin/sh -c "sleep 10 && dotnet Client.dll"
     depends_on:
       - login
       - matchmakerservice
