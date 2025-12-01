@@ -1,4 +1,3 @@
-# Namespace (optional)
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -21,23 +20,23 @@ spec:
         app: login
     spec:
       containers:
-      - name: login
-        image: login:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /api/auth/health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /api/auth/health
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 20
+        - name: login
+          image: tornbjerg/login-system:1.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /api/auth/health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/auth/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 20
 ---
 apiVersion: v1
 kind: Service
@@ -48,7 +47,8 @@ spec:
   selector:
     app: login
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8080
       targetPort: 8080
   type: ClusterIP
@@ -70,17 +70,17 @@ spec:
         app: matchmakerservice
     spec:
       containers:
-      - name: matchmakerservice
-        image: matchmakerservice:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 5000
-        readinessProbe:
-          httpGet:
-            path: /Match/health
-            port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 10
+        - name: matchmakerservice
+          image: tornbjerg/matchmaker-service:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /Match/health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
@@ -91,7 +91,8 @@ spec:
   selector:
     app: matchmakerservice
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 5000
       targetPort: 5000
   type: ClusterIP
@@ -113,11 +114,11 @@ spec:
         app: storeservice
     spec:
       containers:
-      - name: storeservice
-        image: storeservice:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 8081
+        - name: storeservice
+          image: tornbjerg/shop:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
 ---
 apiVersion: v1
 kind: Service
@@ -128,7 +129,8 @@ spec:
   selector:
     app: storeservice
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8081
       targetPort: 8081
   type: ClusterIP
@@ -150,11 +152,11 @@ spec:
         app: playerinfoservice
     spec:
       containers:
-      - name: playerinfoservice
-        image: playerinfoservice:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 6000
+        - name: playerinfoservice
+          image: tornbjerg/player-info:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6000
 ---
 apiVersion: v1
 kind: Service
@@ -165,7 +167,8 @@ spec:
   selector:
     app: playerinfoservice
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 6000
       targetPort: 6000
   type: ClusterIP
@@ -187,11 +190,11 @@ spec:
         app: gameserver
     spec:
       containers:
-      - name: gameserver
-        image: gameserver:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 5001
+        - name: gameserver
+          image: tornbjerg/game-server:1.0.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5001
 ---
 apiVersion: v1
 kind: Service
@@ -202,7 +205,8 @@ spec:
   selector:
     app: gameserver
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 5001
       targetPort: 5001
   type: ClusterIP
@@ -224,26 +228,26 @@ spec:
         app: relayrouter
     spec:
       containers:
-      - name: relayrouter
-        image: relayrouter:latest
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 5002
-        env:
-        - name: ASPNETCORE_URLS
-          value: "http://0.0.0.0:5002"
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5002
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 5002
-          initialDelaySeconds: 10
-          periodSeconds: 20
+        - name: relayrouter
+          image: tornbjerg/relay-router:1.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5002
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://0.0.0.0:5002"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 10
+            periodSeconds: 20
 ---
 apiVersion: v1
 kind: Service
@@ -254,12 +258,99 @@ spec:
   selector:
     app: relayrouter
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 5002
       targetPort: 5002
   type: ClusterIP
 ---
-# Microclient as a Job (runs once)
+# RabbitMQ Deployment + Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:4.2-management
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: staging
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - name: amqp
+      protocol: TCP
+      port: 5672
+      targetPort: 5672
+    - name: management
+      protocol: TCP
+      port: 15672
+      targetPort: 15672
+  type: ClusterIP
+---
+# Relay Deployment + Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: relay
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: relay
+  template:
+    metadata:
+      labels:
+        app: relay
+    spec:
+      containers:
+        - name: relay
+          image: tornbjerg/relay-service:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9000
+            - containerPort: 52306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: relay
+  namespace: staging
+spec:
+  selector:
+    app: relay
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+    - name: udp
+      protocol: TCP
+      port: 52306
+      targetPort: 52306
+  type: ClusterIP
+---
+# Microclient as a Job
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -269,8 +360,17 @@ spec:
   template:
     spec:
       containers:
-      - name: microclient
-        image: microclient:latest
-        imagePullPolicy: Never
-        command: ["/bin/sh", "-c", "dotnet MicroClient.dll"]
+        - name: microclient
+          image: tornbjerg/micro-client:1.0.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LOGIN_URL
+              value: http://login:8080/api/auth/health
+            - name: MATCHMAKER_URL
+              value: http://matchmakerservice:5000/Match/health
+            - name: STORE_URL
+              value: http://storeservice:8081/Store
+            - name: PLAYER_URL
+              value: http://playerinfoservice:6000/api/player
+          command: ["/bin/sh", "-c", "sleep 10 && dotnet MicroClient.dll"]
       restartPolicy: Never
