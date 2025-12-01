@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
 
   relayrouter:
-    image: tornbjerg/relay-router:1.0.0
+    image: tornbjerg/relay-router:1.1.0
     container_name: relayrouter
     ports:
       - "5002:5002"

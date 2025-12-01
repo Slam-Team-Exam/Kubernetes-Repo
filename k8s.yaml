@@ -47,7 +47,8 @@ spec:
   selector:
     app: login
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8080
       targetPort: 8080
   type: ClusterIP
@@ -90,7 +91,8 @@ spec:
   selector:
     app: matchmakerservice
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 5000
       targetPort: 5000
   type: ClusterIP
@@ -127,7 +129,8 @@ spec:
   selector:
     app: storeservice
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8081
       targetPort: 8081
   type: ClusterIP
@@ -164,7 +167,8 @@ spec:
   selector:
     app: playerinfoservice
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 6000
       targetPort: 6000
   type: ClusterIP
@@ -201,7 +205,8 @@ spec:
   selector:
     app: gameserver
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 5001
       targetPort: 5001
   type: ClusterIP
@@ -224,7 +229,7 @@ spec:
     spec:
       containers:
         - name: relayrouter
-          image: tornbjerg/relay-router:1.0.0
+          image: tornbjerg/relay-router:1.1.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5002
@@ -253,7 +258,8 @@ spec:
   selector:
     app: relayrouter
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 5002
       targetPort: 5002
   type: ClusterIP
@@ -291,10 +297,12 @@ spec:
   selector:
     app: rabbitmq
   ports:
-    - protocol: TCP
+    - name: amqp
+      protocol: TCP
       port: 5672
       targetPort: 5672
-    - protocol: TCP
+    - name: management
+      protocol: TCP
       port: 15672
       targetPort: 15672
   type: ClusterIP
@@ -332,10 +340,12 @@ spec:
   selector:
     app: relay
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 9000
       targetPort: 9000
-    - protocol: TCP
+    - name: udp
+      protocol: TCP
       port: 52306
       targetPort: 52306
   type: ClusterIP
@@ -362,5 +372,5 @@ spec:
               value: http://storeservice:8081/Store
             - name: PLAYER_URL
               value: http://playerinfoservice:6000/api/player
-          command: ["/bin/sh", "-c", "sleep 10 && dotnet Client.dll"]
+          command: ["/bin/sh", "-c", "sleep 10 && dotnet MicroClient.dll"]
       restartPolicy: Never
