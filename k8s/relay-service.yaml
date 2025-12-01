@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: relay
+  namespace: staging
+spec:
+  selector:
+    app: relay
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+    - name: udp
+      protocol: TCP
+      port: 52306
+      targetPort: 52306
+  type: ClusterIP

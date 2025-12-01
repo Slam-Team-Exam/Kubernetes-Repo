@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matchmakerservice
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matchmakerservice
+  template:
+    metadata:
+      labels:
+        app: matchmakerservice
+    spec:
+      containers:
+        - name: matchmakerservice
+          image: tornbjerg/matchmaker-service:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /Match/health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: relayrouter
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: relayrouter
+  template:
+    metadata:
+      labels:
+        app: relayrouter
+    spec:
+      containers:
+        - name: relayrouter
+          image: tornbjerg/relay-router:1.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5002
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://0.0.0.0:5002"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 10
+            periodSeconds: 20

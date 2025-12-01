@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gameserver
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gameserver
+  template:
+    metadata:
+      labels:
+        app: gameserver
+    spec:
+      containers:
+        - name: gameserver
+          image: tornbjerg/game-server:1.0.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5001
