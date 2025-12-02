@@ -1,33 +1,14 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
   name: login
   namespace: staging
 spec:
-  replicas: 1
   selector:
-    matchLabels:
-      app: login
-  template:
-    metadata:
-      labels:
-        app: login
-    spec:
-      containers:
-        - name: login
-          image: tornbjerg/login-system:1.1.0
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: /api/auth/health
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /api/auth/health
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 20
+    app: login
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
