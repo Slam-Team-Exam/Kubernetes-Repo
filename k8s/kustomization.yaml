@@ -19,4 +19,3 @@ resources:
   - rabbitmq-service.yaml
   - relay-deployment.yaml
   - relay-service.yaml
-  - microclient-job.yaml
