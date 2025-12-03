@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storeservice
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storeservice
+  template:
+    metadata:
+      labels:
+        app: storeservice
+    spec:
+      containers:
+        - name: storeservice
+          image: tornbjerg/shop:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081

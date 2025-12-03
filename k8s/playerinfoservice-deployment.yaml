@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playerinfoservice
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: playerinfoservice
+  template:
+    metadata:
+      labels:
+        app: playerinfoservice
+    spec:
+      containers:
+        - name: playerinfoservice
+          image: tornbjerg/player-info:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6000
