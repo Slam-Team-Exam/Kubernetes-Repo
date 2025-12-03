@@ -7,8 +7,6 @@ spec:
   selector:
     app: playerinfoservice
   ports:
-    - name: http
-      protocol: TCP
-      port: 6000
+    - port: 6000
       targetPort: 6000
   type: LoadBalancer
