@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: playerinfoservice
   namespace: staging
+  annotations:
+    metallb.universe.tf/address-pool: default
 spec:
   selector:
     app: playerinfoservice

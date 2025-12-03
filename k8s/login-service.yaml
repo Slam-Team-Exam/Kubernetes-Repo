@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: login
   namespace: staging
+  annotations:
+    metallb.universe.tf/address-pool: default
 spec:
   selector:
     app: login
@@ -12,3 +14,4 @@ spec:
       port: 8080
       targetPort: 8080
   type: LoadBalancer
+  

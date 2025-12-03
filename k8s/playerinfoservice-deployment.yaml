@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: playerinfoservice
-          image: tornbjerg/player-info:1.0.0
+          image: tornbjerg/player-info:1.0.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 6000
